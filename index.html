@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutrient Deficiency Quiz</title>
     <style>
+
+        #view-counter {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #000;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: Arial;
+        }
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
@@ -69,6 +80,8 @@
             <button onclick="submitQuiz()">Get My Results</button>
         </div>
     </div>
+
+    <p>This page has been viewed <span id="view-count">0</span> times.</p>
    
     <div id="results" style="display:none;">
         <h2>🎯 Your Recommendation</h2>
@@ -86,6 +99,14 @@
     </div>
 
     <script>
+
+         // Get or initialize the counter
+        let count = localStorage.getItem('pageViews') || 0;
+        count++;
+        
+        // Update display and storage
+        document.getElementById('view-count').textContent = count;
+        localStorage.setItem('pageViews', count);
         // Quiz data
         const questions = document.querySelectorAll('.question');
         let currentQuestion = 0;
