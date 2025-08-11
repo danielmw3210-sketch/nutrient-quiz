@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrient Deficiency Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #progress-bar {
+            height: 5px;
+            background: #ddd;
+            margin-bottom: 20px;
+        }
+        #progress {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌱 Nutrient Deficiency Quiz</h1>
+    <p>Discover which supplements you need in 60 seconds!</p>
+   
+    <div id="progress-bar"><div id="progress"></div></div>
+   
+    <div id="quiz-container">
+        <!-- Question 1 -->
+        <div class="question active" id="q1">
+            <h3>How often do you eat vegetables?</h3>
+            <button onclick="nextQuestion('Daily')">Daily</button>
+            <button onclick="nextQuestion('Weekly')">Weekly</button>
+            <button onclick="nextQuestion('Rarely')">Rarely</button>
+        </div>
+       
+        <!-- Question 2 -->
+        <div class="question" id="q2">
+            <h3>Do you often feel tired?</h3>
+            <button onclick="nextQuestion('Yes')">Yes</button>
+            <button onclick="nextQuestion('No')">No</button>
+        </div>
+       
+        <!-- Email Capture -->
+        <div class="question" id="q3">
+            <h3>Where should we send your results?</h3>
+            <input type="email" id="email" placeholder="Your email" required>
+            <button onclick="submitQuiz()">Get My Results</button>
+        </div>
+    </div>
+   
+    <div id="results" style="display:none;">
+        <h2>🎯 Your Recommendation</h2>
+        <p id="recommendation"></p>
+        <a id="affiliate-link" href="#" target="_blank" style="
+            background: #FF9900;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+        ">Buy Now on Amazon</a>
+        <p><small>Check your email for more tips!</small></p>
+    </div>
+
+    <script>
+        // Quiz data
+        const questions = document.querySelectorAll('.question');
+        let currentQuestion = 0;
+        const answers = [];
+       
+        // Affiliate links - REPLACE THESE!
+        const products = {
+            magnesium: {
+                name: "Magnesium Glycinate",
+                link: "https://amazon.com/magnesium-affiliate-link"
+            },
+            iron: {
+                name: "Iron + Vitamin C",
+                link: "https://amazon.com/iron-affiliate-link"
+            },
+            multi: {
+                name: "High-Quality Multivitamin",
+                link: "https://amazon.com/multivitamin-affiliate-link"
+            }
+        };
+       
+        // Quiz logic
+        function nextQuestion(answer) {
+            answers.push(answer);
+            questions[currentQuestion].classList.remove('active');
+            currentQuestion++;
+           
+            // Update progress bar
+            document.getElementById('progress').style.width =
+                (currentQuestion / questions.length * 100) + '%';
+           
+            if (currentQuestion < questions.length) {
+                questions[currentQuestion].classList.add('active');
+            } else {
+                submitQuiz();
+            }
+        }
+       
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (email && !email.includes('@')) {
+                alert("Please enter a valid email");
+                return;
+            }
+           
+            // Determine recommendation
+            let product;
+            if (answers.includes('Rarely') && answers.includes('Yes')) {
+                product = products.iron;
+            } else if (answers.includes('Yes')) {
+                product = products.magnesium;
+            } else {
+                product = products.multi;
+            }
+           
+            // Show results
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('recommendation').textContent =
+                `Based on your answers, we recommend: ${product.name}`;
+            document.getElementById('affiliate-link').href = product.link;
+           
+            // Store response (localStorage)
+            const responses = JSON.parse(localStorage.getItem('quizResponses') || []);
+            responses.push({
+                email: email,
+                answers: answers,
+                product: product.name,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('quizResponses', JSON.stringify(responses));
+        }
+    </script>
+</body>
+</html> 
